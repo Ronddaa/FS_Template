@@ -1,0 +1,25 @@
+{
+  "name": "FS_Template",
+  "version": "1.0.1",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm --parallel --filter frontend --filter backend run dev",
+    "dev:frontend": "pnpm --filter frontend run dev",
+    "dev:backend": "pnpm --filter backend run dev",
+    "build": "pnpm --recursive run build",
+    "lint": "pnpm --recursive run lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.18.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module"
+}

@@ -1,12 +1,15 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "@crm/crm-web",
+  "version": "0.2.0",
   "private": true,
+  "author": "@ronddaa",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "next": "16.2.12",

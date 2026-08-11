@@ -1,8 +1,11 @@
 packages:
-  - "frontend"
-  - "backend"
+  - "apps/*"
+  - "packages/*"
+  - "packages/modules/*"
 
 allowBuilds:
   "@parcel/watcher": true
+  '@prisma/engines': true
+  prisma: true
   sharp: true
   unrs-resolver: true

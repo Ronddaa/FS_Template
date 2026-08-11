@@ -1,18 +1,23 @@
 {
-  "name": "FS_Template",
-  "version": "1.0.1",
+  "name": "@crm/root",
+  "version": "1.0.2",
   "private": true,
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "dev": "pnpm --parallel --filter frontend --filter backend run dev",
-    "dev:frontend": "pnpm --filter frontend run dev",
-    "dev:backend": "pnpm --filter backend run dev",
-    "build": "pnpm --recursive run build",
-    "lint": "pnpm --recursive run lint"
+    "dev": "turbo run dev --parallel",
+    "dev:web": "turbo run dev --filter=@crm/crm-web",
+    "dev:api": "turbo run dev --filter=@crm/crm-api",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [],
-  "author": "",
+  "author": "@ronddaa",
   "license": "ISC",
   "devEngines": {
     "packageManager": {
@@ -21,5 +26,8 @@
       "onFail": "download"
     }
   },
-  "type": "module"
+  "devDependencies": {
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.9"
+  }
 }

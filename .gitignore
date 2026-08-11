@@ -32,3 +32,12 @@ pnpm-debug.log*
 # Operating systems
 .DS_Store
 Thumbs.db
+
+# Local files Helpers
+helper.md
+.turbo
+
+packages/database/.env
+packages/database/src/generated/
+packages/database/dist/
+release/

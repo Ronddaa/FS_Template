@@ -15,6 +15,8 @@ function getArg(name: string): string | undefined {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableShutdownHooks();
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -45,4 +47,7 @@ async function bootstrap() {
 
   console.log(`Server running on http://${host}:${port}/api`);
 }
-bootstrap();
+void bootstrap().catch((error: unknown) => {
+  console.error('Failed to start CRM API:', error);
+  process.exitCode = 1;
+});

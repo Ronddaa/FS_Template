@@ -1,0 +1,42 @@
+name: crm-template
+
+services:
+  database:
+    image: postgres:18.4-bookworm
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:?POSTGRES_DB is required}"
+      POSTGRES_USER: "${POSTGRES_ADMIN_USER:?POSTGRES_ADMIN_USER is required}"
+      POSTGRES_PASSWORD: "${POSTGRES_ADMIN_PASSWORD:?POSTGRES_ADMIN_PASSWORD is required}"
+
+      POSTGRES_MIGRATOR_USER: "${POSTGRES_MIGRATOR_USER:?POSTGRES_MIGRATOR_USER is required}"
+      POSTGRES_MIGRATOR_PASSWORD: "${POSTGRES_MIGRATOR_PASSWORD:?POSTGRES_MIGRATOR_PASSWORD is required}"
+
+      POSTGRES_APP_USER: "${POSTGRES_APP_USER:?POSTGRES_APP_USER is required}"
+      POSTGRES_APP_PASSWORD: "${POSTGRES_APP_PASSWORD:?POSTGRES_APP_PASSWORD is required}"
+
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:?POSTGRES_PORT is required}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+
+    networks:
+      - internal
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+    driver: bridge

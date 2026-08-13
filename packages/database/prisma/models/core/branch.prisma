@@ -1,0 +1,18 @@
+model Branch {
+  id              String  @id @default(uuid(7)) @db.Uuid
+  organization_id String  @db.Uuid
+  name            String  @db.VarChar(150)
+  code            String  @db.VarChar(50)
+  is_active       Boolean @default(true)
+
+  organization   Organization  @relation(fields: [organization_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  users_branches User_Branch[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@unique([id, organization_id])
+  @@unique([organization_id, code])
+  @@index([organization_id])
+  @@map("branches")
+}

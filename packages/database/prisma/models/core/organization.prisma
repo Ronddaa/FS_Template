@@ -1,11 +1,18 @@
 model Organization {
-  id       String @id @default(uuid(7)) @db.Uuid
+  id String @id @default(uuid(7)) @db.Uuid
+
   name     String @db.VarChar(150)
   timezone String @default("UTC") @db.VarChar(100)
   currency String @default("USD") @db.Char(3)
 
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  registration_code_hash String? @unique @db.Char(64)
+  registration_code_updated_at DateTime? @db.Timestamptz(3)
+
+  branches Branch[]
+  users    User[]
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   @@map("organizations")
 }

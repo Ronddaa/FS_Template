@@ -1,0 +1,19 @@
+enum User_Role {
+  OWNER
+  ADMINISTRATOR
+  MANAGER
+  EMPLOYEE
+  READ_ONLY
+
+  @@map("user_role")
+}
+
+enum User_Status {
+  PENDING
+  ACTIVE
+  DEACTIVATED
+  REJECTED
+  TEMPORARILY_BLOCKED
+
+  @@map("user_status")
+}

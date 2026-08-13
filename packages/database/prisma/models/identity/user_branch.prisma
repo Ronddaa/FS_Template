@@ -1,0 +1,14 @@
+model User_Branch {
+  organization_id String   @db.Uuid
+  user_id         String   @db.Uuid
+  branch_id       String   @db.Uuid
+  assigned_at     DateTime @default(now()) @db.Timestamptz(3)
+
+  user   User   @relation(fields: [user_id, organization_id], references: [id, organization_id], onDelete: Cascade, onUpdate: Cascade)
+  branch Branch @relation(fields: [branch_id, organization_id], references: [id, organization_id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([organization_id, user_id, branch_id])
+  @@index([user_id])
+  @@index([branch_id])
+  @@map("user_branches")
+}

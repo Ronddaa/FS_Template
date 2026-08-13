@@ -1,0 +1,26 @@
+model User {
+  id                String      @id @default(uuid(7)) @db.Uuid
+  organization_id   String      @db.Uuid
+  email             String      @db.VarChar(254)
+  pass_hash         String      @db.VarChar(255)
+  f_name            String      @db.VarChar(100)
+  l_name            String      @db.VarChar(100)
+  role              User_Role   @default(EMPLOYEE)
+  status            User_Status @default(PENDING)
+  email_verified_at DateTime?   @db.Timestamptz(3)
+  approved_at       DateTime?   @db.Timestamptz(3)
+  deactivated_at    DateTime?   @db.Timestamptz(3)
+  created_at        DateTime    @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime    @updatedAt @db.Timestamptz(3)
+
+  organization  Organization   @relation(fields: [organization_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  user_branches User_Branch[]
+  session       User_Session[]
+
+  @@unique([id, organization_id])
+  @@unique([organization_id, email])
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, role])
+  @@map("users")
+}

@@ -15,3 +15,4 @@ export class Database_Client extends PrismaClient {
 
 export { PrismaClient };
 export { Prisma } from "./generated/prisma/client";
+export { User_Role, User_Status } from "./generated/prisma/client";

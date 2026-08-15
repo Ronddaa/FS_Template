@@ -3,7 +3,13 @@ import {
   T_Registration_Request,
   T_Registration_Responce,
 } from "../types/registration.types";
-import { T_Login_Request, T_Login_Response } from "../types/login.types";
+import type {
+  T_Login_Request,
+  T_Login_Response,
+  T_Logout_Response,
+  T_Me_Response,
+  T_Refresh_Response,
+} from "../types/login.types";
 
 export function register_user(
   registration_data: T_Registration_Request,
@@ -27,5 +33,28 @@ export function login_user(
     },
     credentials: "include",
     body: JSON.stringify(login_data),
+  });
+}
+
+export function refresh_auth_session(): Promise<T_Refresh_Response> {
+  return api_request<T_Refresh_Response>("auth/refresh", {
+    method: "POST",
+    credentials: "include",
+  });
+}
+
+export function get_current_user(access_token: string): Promise<T_Me_Response> {
+  return api_request<T_Me_Response>("auth/me", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
+}
+
+export function logout_auth_session(): Promise<T_Logout_Response> {
+  return api_request<T_Logout_Response>("auth/logout", {
+    method: "POST",
+    credentials: "include",
   });
 }

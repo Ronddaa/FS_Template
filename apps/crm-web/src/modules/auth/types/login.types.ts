@@ -23,3 +23,11 @@ export type T_Login_Response = {
 export type T_Refresh_Response = {
   access_token: string;
 };
+
+export type T_Me_Response = {
+  user: T_Login_User;
+};
+
+export type T_Logout_Response = {
+  message: string;
+};

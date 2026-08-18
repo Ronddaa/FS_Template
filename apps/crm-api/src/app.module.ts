@@ -8,6 +8,7 @@ import { validate_environment } from './config/environment_validation';
 import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { Auth_Module } from './auth/auth.module';
+import { Users_Module } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Auth_Module } from './auth/auth.module';
     }),
     Auth_Module,
     Database_Module,
+    Users_Module,
     Health_Module,
   ],
   controllers: [AppController],

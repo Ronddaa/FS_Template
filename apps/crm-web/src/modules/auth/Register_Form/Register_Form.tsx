@@ -63,9 +63,11 @@ export default function Register_Form() {
             </div>
           )}
 
+          <h1 className={styles.title}>Register</h1>
+
           <div className={styles.w_input}>
             <label htmlFor="f_name" className={styles.label}>
-              First name
+              First name <span className={styles.dot_is_active}></span>
             </label>
 
             <input
@@ -82,7 +84,7 @@ export default function Register_Form() {
 
           <div className={styles.w_input}>
             <label htmlFor="l_name" className={styles.label}>
-              Last name
+              Last name <span className={styles.dot_is_active}></span>
             </label>
 
             <input
@@ -99,7 +101,7 @@ export default function Register_Form() {
 
           <div className={styles.w_input}>
             <label htmlFor="email" className={styles.label}>
-              Email
+              Email <span className={styles.dot_is_active}></span>
             </label>
 
             <input
@@ -109,13 +111,14 @@ export default function Register_Form() {
               className={styles.input}
               autoComplete="email"
               maxLength={254}
+              pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
               required
             />
           </div>
 
           <div className={styles.w_input}>
             <label htmlFor="password" className={styles.label}>
-              Password
+              Password <span className={styles.dot_is_active}></span>
             </label>
 
             <input

@@ -1,0 +1,111 @@
+.section_register_form &:global(.container) {
+  position: relative;
+}
+
+.register_form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
+  background-color: var(--color-black-total);
+  padding: 54px 42px;
+  border: 1px solid var(--color-white);
+
+  min-width: 46%;
+
+  clip-path: polygon(
+    0% 0%,
+    20% 0%,
+    25% 4%,
+    75% 4%,
+    80% 0%,
+    100% 0%,
+    100% 30%,
+    98% 40%,
+    98% 60%,
+    100% 70%,
+    100% 100%,
+    80% 100%,
+    75% 96%,
+    25% 96%,
+    20% 100%,
+    0 100%,
+    0 70%,
+    2% 60%,
+    2% 40%,
+    0 30%
+  );
+}
+
+.title {
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  font-size: 42px;
+}
+
+.w_input {
+  position: relative;
+  padding: 10px 0;
+  &:has(.input:valid) {
+    .dot_is_active {
+      background-color: var(--color-green);
+    }
+  }
+
+  .label {
+    position: absolute;
+    top: -14px;
+    text-transform: uppercase;
+    left: 10px;
+    z-index: 2;
+
+    .dot_is_active {
+      position: absolute;
+      top: 2px;
+      right: -10px;
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--color-red);
+      filter: blur(1px);
+    }
+  }
+
+  .input {
+    width: 420px;
+    padding: 8px 12px;
+    background-color: var(--color-white-25);
+    border: 1px solid transparent;
+
+    color: var(--color-white);
+    font-size: 20px;
+
+    transition: 0.3s;
+
+    &:hover,
+    &focus {
+      border: 1px solid var(--color-blue);
+    }
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px var(--color-black) inset !important;
+      -webkit-text-fill-color: var(--color-white) !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+  }
+}
+
+.btn_register{
+  border: none;
+  background-color: transparent;
+  color: var(--color-white);
+}

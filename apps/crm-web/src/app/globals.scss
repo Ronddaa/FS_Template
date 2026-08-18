@@ -1,6 +1,24 @@
 :root {
   --color-white: #f2f2f2;
+  --color-white-50: #f2f2f280;
+  --color-white-25: #f2f2f240;
+
   --color-black: #181818;
+  --color-black-50: #18181880;
+  --color-black-25: #18181840;
+  --color-black-total: #000000;
+
+  --color-red: #a20000;
+  --color-red-50: #a2000080;
+  --color-red-25: #a2000040;
+
+  --color-green: #3AC977;
+  --color-green-50: #3AC97780;
+  --color-green-25: #3AC97740;
+
+  --color-blue: #0D99FF;
+  --color-blue-50: #0D99FF80;
+  --color-blue-25: #0D99FF40;
 }
 *,
 *::before,
@@ -58,7 +76,7 @@ img {
 button {
   font-weight: 500;
   font-family: var(--font-jura), sans-serif;
-  
+
   cursor: pointer;
 
   transition: 0.3s;

@@ -15,6 +15,7 @@ import { Token_Service } from './services/token.service';
 import { Session_Service } from './services/session.service';
 import { APP_GUARD } from '@nestjs/core';
 import { Access_Token_Guard } from './guards/access_token.guard';
+import { Allowed_Roles_Guard } from './guards/allowed_roles.guard';
 
 @Module({
   imports: [
@@ -43,6 +44,10 @@ import { Access_Token_Guard } from './guards/access_token.guard';
     {
       provide: APP_GUARD,
       useClass: Access_Token_Guard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: Allowed_Roles_Guard,
     },
   ],
   exports: [JwtModule, Password_Service],

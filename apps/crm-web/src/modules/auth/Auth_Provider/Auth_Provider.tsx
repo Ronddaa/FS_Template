@@ -1,5 +1,7 @@
 "use client";
 
+import { api_request } from "@/lib/api/api_request";
+import { Api_Request_Error } from "@/lib/api/api_request_error";
 import {
   createContext,
   useCallback,
@@ -10,7 +12,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { get_current_user, logout_auth_session, refresh_auth_session } from "../api/auth.api";
+import {
+  get_current_user,
+  logout_auth_session,
+  refresh_auth_session,
+} from "../api/auth.api";
+import type { T_Authenticated_Api_Request } from "../types/authenticated_api_request.types";
 import type { T_Login_Response, T_Login_User } from "../types/login.types";
 
 export type T_Auth_Status = "CHECKING" | "AUTHENTICATED" | "ANONYMOUS";
@@ -23,6 +30,7 @@ type T_Auth_Context = {
   set_auth_session: (login_data: T_Login_Response) => void;
   clear_auth_session: () => void;
   logout_session: () => Promise<void>;
+  authenticated_api_request: T_Authenticated_Api_Request;
 };
 
 type T_Auth_Provider_Props = {
@@ -49,6 +57,8 @@ export default function Auth_Provider({ children }: T_Auth_Provider_Props) {
     null,
   );
 
+  const refresh_promise_ref = useRef<Promise<string> | null>(null);
+
   const [user, set_user] = useState<T_Login_User | null>(null);
   const [auth_status, set_auth_status] = useState<T_Auth_Status>("CHECKING");
 
@@ -73,6 +83,86 @@ export default function Auth_Provider({ children }: T_Auth_Provider_Props) {
     set_user(null);
     set_auth_status("ANONYMOUS");
   }, []);
+
+  const refresh_access_token = useCallback(async (): Promise<string> => {
+    refresh_promise_ref.current ??= refresh_auth_session().then(
+      (refresh_result) => {
+        access_token_ref.current = refresh_result.access_token;
+
+        return refresh_result.access_token;
+      },
+    );
+
+    try {
+      return await refresh_promise_ref.current;
+    } finally {
+      refresh_promise_ref.current = null;
+    }
+  }, []);
+
+  const authenticated_api_request = useCallback<T_Authenticated_Api_Request>(
+    async <Response_Type,>(
+      path: string,
+      options: RequestInit = {},
+    ): Promise<Response_Type> => {
+      const request_access_token = access_token_ref.current;
+
+      if (!request_access_token) {
+        clear_auth_session();
+
+        throw new Api_Request_Error({
+          message: "Authentication is required",
+          status_code: 401,
+        });
+      }
+
+      const execute_request = (
+        access_token: string,
+      ): Promise<Response_Type> => {
+        const headers = new Headers(options.headers);
+
+        headers.set("Authorization", `Bearer ${access_token}`);
+
+        return api_request<Response_Type>(path, {
+          ...options,
+          headers,
+        });
+      };
+
+      try {
+        return await execute_request(request_access_token);
+      } catch (error: unknown) {
+        if (
+          !(error instanceof Api_Request_Error) ||
+          error.status_code !== 401
+        ) {
+          throw error;
+        }
+      }
+
+      let retry_access_token = access_token_ref.current;
+
+      if (!retry_access_token || retry_access_token === request_access_token) {
+        try {
+          retry_access_token = await refresh_access_token();
+        } catch (error: unknown) {
+          clear_auth_session();
+          throw error;
+        }
+      }
+
+      try {
+        return await execute_request(retry_access_token);
+      } catch (error: unknown) {
+        if (error instanceof Api_Request_Error && error.status_code === 401) {
+          clear_auth_session();
+        }
+
+        throw error;
+      }
+    },
+    [clear_auth_session, refresh_access_token],
+  );
 
   const logout_session = useCallback(async (): Promise<void> => {
     await logout_auth_session();
@@ -110,6 +200,7 @@ export default function Auth_Provider({ children }: T_Auth_Provider_Props) {
       set_auth_session,
       clear_auth_session,
       logout_session,
+      authenticated_api_request,
     }),
     [
       user,
@@ -118,7 +209,8 @@ export default function Auth_Provider({ children }: T_Auth_Provider_Props) {
       set_access_token,
       set_auth_session,
       clear_auth_session,
-      logout_session
+      logout_session,
+      authenticated_api_request,
     ],
   );
 

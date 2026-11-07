@@ -17,7 +17,7 @@ import {
   logout_auth_session,
   refresh_auth_session,
 } from "../api/auth.api";
-import type { T_Authenticated_Api_Request } from "../types/authenticated_api_request.types";
+import type { T_Authenticated_Api_Request } from "../../../lib/api/authenticated_api_request.types";
 import type { T_Login_Response, T_Login_User } from "../types/login.types";
 
 export type T_Auth_Status = "CHECKING" | "AUTHENTICATED" | "ANONYMOUS";

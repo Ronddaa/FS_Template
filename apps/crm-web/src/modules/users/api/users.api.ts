@@ -1,5 +1,5 @@
-import { T_Authenticated_Api_Request } from "@/modules/auth/types/authenticated_api_request.types";
-import { T_Get_Users_Query, T_Get_Users_Response } from "../types/users.types";
+import type { T_Authenticated_Api_Request } from "@/lib/api/authenticated_api_request.types";
+import type { T_Get_Users_Query, T_Get_Users_Response } from "../types/users.types";
 
 export function get_users(
   authenticated_api_request: T_Authenticated_Api_Request,

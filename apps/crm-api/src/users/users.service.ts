@@ -1,4 +1,4 @@
-//src/users/users.service.ts
+// Path: apps/crm-api/src/users/users.service.ts
 
 import { User_Role } from '@crm/database';
 import {
@@ -60,6 +60,9 @@ export class Users_Service {
         id: user_id,
         organization_id,
         status: 'PENDING',
+        email_verified_at: {
+          not: null,
+        },
       },
       data: {
         role,
@@ -112,7 +115,7 @@ export class Users_Service {
     );
 
     if (!role_is_assignable) {
-      throw new BadRequestException('This role cannot be assinged');
+      throw new BadRequestException('This role cannot be assigned');
     }
 
     const result = await this.db_service.user.updateMany({

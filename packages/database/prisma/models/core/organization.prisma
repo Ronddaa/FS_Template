@@ -5,11 +5,12 @@ model Organization {
   timezone String @default("UTC") @db.VarChar(100)
   currency String @default("USD") @db.Char(3)
 
-  registration_code_hash String? @unique @db.Char(64)
+  registration_code_hash       String?   @unique @db.Char(64)
   registration_code_updated_at DateTime? @db.Timestamptz(3)
 
   branches Branch[]
   users    User[]
+  roles    Role[]
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)

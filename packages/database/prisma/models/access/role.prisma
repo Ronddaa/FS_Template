@@ -1,0 +1,23 @@
+model Role {
+  id              String @id @default(uuid(7)) @db.Uuid
+  organization_id String @db.Uuid
+  code            String @db.VarChar(100)
+  name            String @db.VarChar(150)
+
+  is_system Boolean @default(false)
+  is_active Boolean @default(true)
+  version   Int     @default(1)
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Restrict)
+
+  users       User[]
+  permissions Role_Permission[]
+
+  @@unique([id, organization_id])
+  @@unique([organization_id, code])
+  @@index([organization_id, is_active])
+  @@map("roles")
+}

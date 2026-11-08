@@ -1,0 +1,24 @@
+enum Setup_Status {
+  NOT_STARTED
+  TOKEN_ISSUED
+  EMAIL_PENDING
+  COMPLETED
+}
+
+model Installation_Setup {
+  id Int @id
+
+  status Setup_Status @default(NOT_STARTED)
+
+  token_hash       String?   @unique @db.Char(64)
+  token_expires_at DateTime? @db.Timestamptz(3)
+
+  completed_at DateTime? @db.Timestamptz(3)
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
+
+  registration Setup_Registration?
+
+  @@map("installation_setup")
+}

@@ -1,0 +1,11 @@
+model Role_Permission {
+  role_id       String @db.Uuid
+  permission_id String @db.Uuid
+
+  role Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  permission Permission @relation(fields: [permission_id], references: [id], onDelete: Restrict)
+
+  @@id([role_id, permission_id])
+  @@map("role_permissions")
+}

@@ -1,0 +1,19 @@
+enum Permission_Override_Effect {
+  ALLOW
+  DENY
+}
+
+model User_Permission_Override {
+  organization_id String @db.Uuid
+  user_id         String @db.Uuid
+  permission_id   String @db.Uuid
+
+  effect Permission_Override_Effect
+
+  user User @relation(fields: [user_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  permission Permission @relation(fields: [permission_id], references: [id], onDelete: Restrict)
+
+  @@id([organization_id, user_id, permission_id])
+  @@map("user_permission_overrides")
+}

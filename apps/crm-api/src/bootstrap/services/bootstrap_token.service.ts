@@ -1,6 +1,7 @@
 // Path: apps/crm-api/src/bootstrap/services/bootstrap_token.service.ts
 
 import { ConflictException, Injectable } from '@nestjs/common';
+import { createHash, randomBytes } from 'crypto';
 import { Database_Service } from 'src/database/database.service';
 
 const SETUP_ID = 1;
@@ -18,20 +19,49 @@ export class Bootstrap_Token_Service {
             ON CONFLICT ("id") DO NOTHING
             `;
 
-            await transaction.$queryRaw`
+      await transaction.$queryRaw`
             SELECT "id"
             FROM "installation_setup"
             WHERE "id" = ${SETUP_ID}
             FOR UPDATE
             `;
 
-            const organization = await transaction.organization.findFirst({
-                select: { id: true },
-            })
+      const organization = await transaction.organization.findFirst({
+        select: { id: true },
+      });
 
-            if (!organization) {
-                throw new ConflictException("CRM organization already exists")
-            }
+      if (organization) {
+        throw new ConflictException('CRM organization already exists');
+      }
+
+      const token = randomBytes(TOKEN_BYTES).toString('base64url');
+      const token_hash = createHash('sha256').update(token).digest('hex');
+
+      const updated_rows = await transaction.$executeRaw`
+  UPDATE "installation_setup"
+  SET
+    "status" = 'TOKEN_ISSUED',
+    "token_hash" = ${token_hash},
+    "token_expires_at" = clock_timestamp() + INTERVAL '15 minutes',
+    "updated_at" = clock_timestamp()
+  WHERE "id" = ${SETUP_ID}
+    AND "completed_at" IS NULL
+    AND (
+      "status" = 'NOT_STARTED'
+      OR (
+        "status" = 'TOKEN_ISSUED'
+        AND "token_expires_at" <= clock_timestamp()
+      )
+    )
+`;
+
+      if (updated_rows !== 1) {
+        throw new ConflictException(
+          'Setup token cannot be issued in the current installation state',
+        );
+      }
+
+      return token;
     });
   }
 }

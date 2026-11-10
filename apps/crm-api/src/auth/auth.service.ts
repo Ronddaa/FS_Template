@@ -150,8 +150,20 @@ export class Auth_Service {
           message: 'Your account is temporarily blocked',
         });
 
+      case 'MFA_SETUP_REQUIRED':
+        throw new ForbiddenException({
+          code: 'MFA_SETUP_REQUIRED',
+          message: 'Finish setting up your sign-in method to access your CRM.',
+        });
+
       case 'ACTIVE':
         break;
+
+      default:
+        throw new ForbiddenException({
+          code: 'ACCOUNT_ACCESS_RESTRICTED',
+          message: 'Full account access is unavailable.',
+        });
     }
 
     const session = await this.session_service.create_session({

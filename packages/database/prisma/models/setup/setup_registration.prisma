@@ -9,9 +9,11 @@ model Setup_Registration {
   l_name String @db.VarChar(100)
 
   email     String @db.VarChar(254)
+  phone     String? @db.VarChar(16)
   pass_hash String @db.VarChar(255)
 
   email_token_hash       String?   @unique @db.Char(64)
+  email_token_issued_at DateTime? @db.Timestamptz(3)
   email_token_expires_at DateTime? @db.Timestamptz(3)
 
   email_verified_at DateTime? @db.Timestamptz(3)

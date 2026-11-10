@@ -9,6 +9,7 @@ import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { Auth_Module } from './auth/auth.module';
 import { Users_Module } from './users/users.module';
+import { Bootstrap_Module } from './bootstrap/bootstrap.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Users_Module } from './users/users.module';
       validate: validate_environment,
     }),
     Auth_Module,
+    Bootstrap_Module,
     Database_Module,
     Users_Module,
     Health_Module,

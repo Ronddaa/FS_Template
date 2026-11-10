@@ -1,6 +1,11 @@
 // Path: apps/crm-api/src/bootstrap/services/bootstrap_token.service.ts
 
-import { ConflictException, Injectable } from '@nestjs/common';
+import type { Prisma } from '@crm/database';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { createHash, randomBytes } from 'crypto';
 import { Database_Service } from 'src/database/database.service';
 
@@ -63,5 +68,30 @@ export class Bootstrap_Token_Service {
 
       return token;
     });
+  }
+
+  async consume_token(
+    transaction: Prisma.TransactionClient,
+    token: string,
+  ): Promise<void> {
+    const token_hash = createHash('sha256').update(token).digest('hex');
+
+    const updated_rows = await transaction.$executeRaw`
+  UPDATE "installation_setup"
+  SET
+    "status" = 'EMAIL_PENDING',
+    "token_hash" = NULL,
+    "token_expires_at" = NULL,
+    "updated_at" = clock_timestamp()
+  WHERE "id" = ${SETUP_ID}
+    AND "status" = 'TOKEN_ISSUED'
+    AND "completed_at" IS NULL
+    AND "token_hash" = ${token_hash}
+    AND "token_expires_at" > clock_timestamp()
+`;
+
+    if (updated_rows !== 1) {
+      throw new ForbiddenException('Setup link is invalid or expired');
+    }
   }
 }

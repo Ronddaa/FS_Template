@@ -41,4 +41,22 @@ export class Bootstrap_Email_Service {
       ].join('\n'),
     });
   }
+
+  async send_passkey_enrollment_code(
+    email: string,
+    code: string,
+  ): Promise<void> {
+    await this.transporter.sendMail({
+      from: this.mail_from,
+      to: email,
+      subject: 'Verify your identity to set up a passkey',
+      text: [
+        'Enter this code on the CRM passkey setup page:',
+        '',
+        code,
+        '',
+        'If you did not request this code, do not share it with anyone.',
+      ].join('\n'),
+    });
+  }
 }

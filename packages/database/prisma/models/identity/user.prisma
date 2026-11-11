@@ -17,9 +17,10 @@ model User {
   created_at           DateTime                   @default(now()) @db.Timestamptz(3)
   updated_at           DateTime                   @updatedAt @db.Timestamptz(3)
 
-  organization  Organization   @relation(fields: [organization_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  user_branches User_Branch[]
-  session       User_Session[]
+  organization       Organization              @relation(fields: [organization_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  user_branches      User_Branch[]
+  session            User_Session[]
+  passkey_enrollment Owner_Passkey_Enrollment?
 
   @@unique([id, organization_id])
   @@unique([organization_id, email])

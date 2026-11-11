@@ -157,6 +157,12 @@ export class Auth_Service {
         });
 
       case 'ACTIVE':
+        if (user.role === 'OWNER') {
+          throw new ForbiddenException({
+            code: 'PASSKEY_REQUIER',
+            message: 'Use your passkey to sign in.',
+          });
+        }
         break;
 
       default:

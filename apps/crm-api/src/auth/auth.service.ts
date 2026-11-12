@@ -159,7 +159,7 @@ export class Auth_Service {
       case 'ACTIVE':
         if (user.role === 'OWNER') {
           throw new ForbiddenException({
-            code: 'PASSKEY_REQUIER',
+            code: 'PASSKEY_REQUIRED',
             message: 'Use your passkey to sign in.',
           });
         }

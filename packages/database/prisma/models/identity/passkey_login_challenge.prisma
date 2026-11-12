@@ -1,0 +1,8 @@
+model Passkey_Login_Challenge {
+    id         String   @id @default(uuid(7)) @db.Uuid
+    challenge  String   @unique @db.Text
+    expires_at DateTime @db.Timestamptz(3)
+
+    @@index([expires_at])
+    @@map("passkey_login_challenges")
+}

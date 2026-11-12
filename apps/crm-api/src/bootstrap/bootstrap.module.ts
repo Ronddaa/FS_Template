@@ -8,6 +8,7 @@ import { Bootstrap_Email_Token_Service } from './services/bootstrap_email_token.
 import { Bootstrap_Registration_Service } from './services/bootstrap_registration.service';
 import { Bootstrap_Controller } from './bootstrap.controller';
 import { Owner_Passkey_Enrollment_Service } from './services/owner_passkey_enrollment.service';
+import { Owner_Passkey_Registration_Service } from './services/owner_passkey_registration.service';
 
 @Module({
   imports: [Auth_Module],
@@ -17,6 +18,7 @@ import { Owner_Passkey_Enrollment_Service } from './services/owner_passkey_enrol
     Bootstrap_Email_Token_Service,
     Bootstrap_Registration_Service,
     Owner_Passkey_Enrollment_Service,
+    Owner_Passkey_Registration_Service,
   ],
   controllers: [Bootstrap_Controller],
 })

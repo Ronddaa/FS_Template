@@ -16,6 +16,7 @@ import { Session_Service } from './services/session.service';
 import { APP_GUARD } from '@nestjs/core';
 import { Access_Token_Guard } from './guards/access_token.guard';
 import { Allowed_Roles_Guard } from './guards/allowed_roles.guard';
+import { Owner_Passkey_Login_Service } from './services/owner_passkey_login.service';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { Allowed_Roles_Guard } from './guards/allowed_roles.guard';
     Password_Service,
     Session_Service,
     Token_Service,
+    Owner_Passkey_Login_Service,
     {
       provide: APP_GUARD,
       useClass: Access_Token_Guard,

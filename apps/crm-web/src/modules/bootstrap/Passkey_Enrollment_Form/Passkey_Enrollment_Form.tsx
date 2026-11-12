@@ -4,9 +4,13 @@
 import { useState } from "react";
 import styles from "./Passkey_Enrollment_Form.module.scss";
 import {
+  get_owner_passkey_options,
   request_passkey_code,
+  save_owner_passkey,
   verify_passkey_code,
 } from "../api/bootstrap.api";
+import { startRegistration } from "@simplewebauthn/browser";
+import Link from "next/link";
 
 export default function Passkey_Enrollment_Form() {
   const [is_submitting, set_is_submitting] = useState(false);
@@ -15,8 +19,8 @@ export default function Passkey_Enrollment_Form() {
     request_id: string;
   } | null>(null);
   const [error_message, set_error_message] = useState("");
-
   const [enrollment_token, set_enrollment_token] = useState("");
+  const [passkey_created, set_passkey_created] = useState(false);
 
   async function send_code(form: HTMLFormElement) {
     if (is_submitting) return;
@@ -68,13 +72,80 @@ export default function Passkey_Enrollment_Form() {
     }
   }
 
+  async function create_passkey() {
+    if (!enrollment_token || is_submitting) return;
+
+    set_is_submitting(true);
+    set_error_message("");
+
+    try {
+      const options = await get_owner_passkey_options(enrollment_token);
+      const credential = await startRegistration({ optionsJSON: options });
+      await save_owner_passkey(enrollment_token, credential);
+
+      set_passkey_created(true);
+      set_enrollment_token("");
+      set_pending_verification(null);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Could not create your passkey.";
+
+      set_error_message(message);
+    } finally {
+      set_is_submitting(false);
+    }
+  }
+
+  if (passkey_created) {
+    return (
+      <section className={styles.section_passkey_enrollment_form}>
+        <h1 className={styles.title}>Passkey created</h1>
+        <p className={styles.text}>
+          Your owner account is ready for passkey sign-in.
+        </p>
+        <Link href="/login">Continue to sign in</Link>
+      </section>
+    );
+  }
+
   if (enrollment_token) {
     return (
       <section className={styles.section_passkey_enrollment_form}>
-        <h1 className={styles.title}>Indetity verified</h1>
+        <h1 className={styles.title}>Create your passkey</h1>
         <p className={styles.text}>
-          Your identity has been verified for passkey setup.
+          Use your device to create a passkey for your CRM owner account.
         </p>
+
+        <button
+          className={styles.create_btn}
+          type="button"
+          disabled={is_submitting}
+          onClick={() => void create_passkey()}
+        >
+          {is_submitting ? "Creating passkey..." : "Create passkey"}
+        </button>
+
+        {error_message && (
+          <>
+            <p className={styles.text} role="alert">
+              {error_message}
+            </p>
+            <button
+              className={styles.verify_btn}
+              type="button"
+              disabled={is_submitting}
+              onClick={() => {
+                set_enrollment_token("");
+                set_pending_verification(null);
+                set_error_message("");
+              }}
+            >
+              Verify identity again
+            </button>
+          </>
+        )}
       </section>
     );
   }
@@ -130,7 +201,11 @@ export default function Passkey_Enrollment_Form() {
             Request a new code
           </button>
         </form>
-        {error_message && <p className={styles.text} role="alert">{error_message}</p>}
+        {error_message && (
+          <p className={styles.text} role="alert">
+            {error_message}
+          </p>
+        )}
       </section>
     );
   }

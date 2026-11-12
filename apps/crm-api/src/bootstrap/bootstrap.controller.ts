@@ -9,12 +9,18 @@ import { Owner_Passkey_Enrollment_Service } from './services/owner_passkey_enrol
 import { seconds, Throttle } from '@nestjs/throttler';
 import { Login_DTO } from 'src/auth/dto/login.dto';
 import { Verify_Passkey_Code_DTO } from './dto/verify_passkey_code.dto';
+import { Owner_Passkey_Registration_Service } from './services/owner_passkey_registration.service';
+import {
+  Begin_Owner_Passkey_DTO,
+  Finish_Owner_Passkey_DTO,
+} from './dto/register_owner_passkey.dto';
 
 @Controller('bootstrap')
 export class Bootstrap_Controller {
   constructor(
     private readonly registration_service: Bootstrap_Registration_Service,
     private readonly enrollment_service: Owner_Passkey_Enrollment_Service,
+    private readonly passkey_registration_service: Owner_Passkey_Registration_Service,
   ) {}
 
   @Public_Route()
@@ -49,5 +55,26 @@ export class Bootstrap_Controller {
     @Body() dto: Verify_Passkey_Code_DTO,
   ): Promise<{ enrollment_token: string }> {
     return this.enrollment_service.verify_code(dto.request_id, dto.code);
+  }
+
+  @Public_Route()
+  @Throttle({ default: { limit: 10, ttl: seconds(60) } })
+  @Post('passkey/registration/options')
+  @HttpCode(HttpStatus.OK)
+  begin_passkey_registration(@Body() dto: Begin_Owner_Passkey_DTO) {
+    return this.passkey_registration_service.begin_registration(
+      dto.enrollment_token,
+    );
+  }
+
+  @Public_Route()
+  @Throttle({ default: { limit: 10, ttl: seconds(60) } })
+  @Post('passkey/registration/verify')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  finish_passkey_registration(@Body() dto: Finish_Owner_Passkey_DTO) {
+    return this.passkey_registration_service.finish_registration(
+      dto.enrollment_token,
+      dto.credential,
+    );
   }
 }

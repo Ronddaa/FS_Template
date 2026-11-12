@@ -1,12 +1,13 @@
 model Owner_Passkey_Enrollment {
-    user_id          String    @id @db.Uuid
-    code_hash        String    @db.Char(64)
-    request_hash     String?   @unique @db.Char(64)
-    grant_hash       String?   @unique @db.Char(64)
-    grant_expires_at DateTime? @db.Timestamptz(3)
-    issued_at        DateTime  @db.Timestamptz(3)
-    expires_at       DateTime  @db.Timestamptz(3)
-    attempts         Int       @default(0)
+    user_id                String    @id @db.Uuid
+    code_hash              String    @db.Char(64)
+    request_hash           String?   @unique @db.Char(64)
+    grant_hash             String?   @unique @db.Char(64)
+    grant_expires_at       DateTime? @db.Timestamptz(3)
+    registration_challenge String?   @db.Text
+    issued_at              DateTime  @db.Timestamptz(3)
+    expires_at             DateTime  @db.Timestamptz(3)
+    attempts               Int       @default(0)
 
     user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 

@@ -17,10 +17,15 @@ import type { Request, Response } from 'express';
 import { Public_Route } from './decorators/public_route.decorator';
 import { Current_User } from './decorators/current_user.decorator';
 import type { T_Authenticated_User } from 'types/auth/authenticated_request.types';
+import { Owner_Passkey_Login_Service } from './services/owner_passkey_login.service';
+import { Verify_Passkey_Login_DTO } from './dto/verify_passkey_login.dto';
 
 @Controller('auth')
 export class Auth_Controller {
-  constructor(private readonly auth_service: Auth_Service) {}
+  constructor(
+    private readonly auth_service: Auth_Service,
+    private readonly passkey_login_service: Owner_Passkey_Login_Service,
+  ) {}
 
   @Throttle({
     default: {
@@ -64,6 +69,45 @@ export class Auth_Controller {
       user: result.user,
       access_token: result.access_token,
     };
+  }
+
+  @Throttle({ default: { limit: 20, ttl: seconds(60) } })
+  @Public_Route()
+  @Post('passkey/options')
+  async begin_passkey_login(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    response.setHeader('Cache-Control', 'no-store');
+    return this.passkey_login_service.begin_login(request.get('origin'));
+  }
+
+  @Throttle({ default: { limit: 10, ttl: seconds(60) } })
+  @Public_Route()
+  @Post('passkey/verify')
+  async finish_passkey_login(
+    @Body() dto: Verify_Passkey_Login_DTO,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.passkey_login_service.finish_login(
+      request.get('origin'),
+      dto.challenge_id,
+      dto.credential,
+      {
+        user_agent: request.get('user-agent')?.slice(0, 512),
+        ip_address: request.ip,
+      },
+    );
+
+    this.set_refresh_cookie(
+      response,
+      result.refresh_token,
+      result.refresh_token_expires_at,
+    );
+    response.setHeader('Cache-Control', 'no-store');
+
+    return { user: result.user, access_token: result.access_token };
   }
 
   @Throttle({

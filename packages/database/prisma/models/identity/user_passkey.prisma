@@ -1,0 +1,15 @@
+model User_Passkey {
+    credential_id String   @id @db.Text
+    user_id       String   @db.Uuid
+    public_key    Bytes
+    counter       BigInt   @default(0)
+    transports    String[] @default([])
+    device_type   String   @db.VarChar(32)
+    backed_up     Boolean
+    created_at    DateTime @default(now()) @db.Timestamptz(3)
+
+    user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("user_passkey")
+}

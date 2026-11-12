@@ -8,6 +8,7 @@ import { type SyntheticEvent, useState } from "react";
 import type { T_Login_Request } from "../types/login.types";
 import { login_user } from "../api/auth.api";
 import { Api_Request_Error } from "@/lib/api/api_request_error";
+import { usePasskey_Login } from "../hooks/use_passkey_login.hook";
 
 export default function Login_Form() {
   const router = useRouter();
@@ -15,6 +16,10 @@ export default function Login_Form() {
 
   const [is_submitting, set_is_submitting] = useState(false);
   const [error_message, set_error_message] = useState<string | null>(null);
+
+  const [passkey_error, set_passkey_error] = useState<string | null>(null);
+
+  usePasskey_Login(!is_submitting && passkey_error === null, set_passkey_error)
 
   async function handle_submit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -61,6 +66,7 @@ export default function Login_Form() {
       <div className="container">
         <form onSubmit={handle_submit} aria-busy={is_submitting}>
           {error_message && <div role="alert">{error_message}</div>}
+          {passkey_error && !error_message && <div role="alert">{passkey_error}</div>}
 
           <div className={styles.w_input}>
             <label htmlFor="email" className={styles.label}>
@@ -72,7 +78,10 @@ export default function Login_Form() {
               name="email"
               type="email"
               className={styles.input}
-              autoComplete="email"
+              autoComplete="username webauthn"
+              onFocus={() => {
+                if (passkey_error) set_passkey_error(null)
+              }}
               maxLength={254}
               required
             />

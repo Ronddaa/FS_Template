@@ -89,6 +89,7 @@ export class Owner_Passkey_Enrollment_Service {
         SET request_hash = EXCLUDED.request_hash,
           code_hash = EXCLUDED.code_hash,
           grant_hash = NULL,
+          registration_challenge = NULL,
           grant_expires_at = NULL,
           issued_at = EXCLUDED.issued_at,
           expires_at = EXCLUDED.expires_at,

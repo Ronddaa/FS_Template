@@ -21,6 +21,7 @@ model User {
   user_branches      User_Branch[]
   session            User_Session[]
   passkey_enrollment Owner_Passkey_Enrollment?
+  passkey            User_Passkey[]
 
   @@unique([id, organization_id])
   @@unique([organization_id, email])

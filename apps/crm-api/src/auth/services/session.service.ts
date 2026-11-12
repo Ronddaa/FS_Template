@@ -9,6 +9,7 @@ import {
   T_Refresh_Session_Input,
 } from 'types/auth/session.types';
 import { REFRESH_SESSION_DURATION_MS } from '../constants/auth.constants';
+import type { Prisma } from '@crm/database';
 
 @Injectable()
 export class Session_Service {
@@ -19,6 +20,7 @@ export class Session_Service {
 
   async create_session(
     input: T_Create_Session_Input,
+    db: Pick<Prisma.TransactionClient, 'user_Session'> = this.db_service,
   ): Promise<T_Created_Session> {
     const { refresh_token, refresh_token_hash } =
       this.token_service.create_refresh_token();
@@ -29,7 +31,7 @@ export class Session_Service {
       now.getTime() + REFRESH_SESSION_DURATION_MS,
     );
 
-    const session = await this.db_service.user_Session.create({
+    const session = await db.user_Session.create({
       data: {
         user_id: input.user_id,
         refresh_token_hash,
@@ -57,7 +59,7 @@ export class Session_Service {
         refresh_token_expires_at,
       };
     } catch (error: unknown) {
-      await this.db_service.user_Session
+      await db.user_Session
         .delete({
           where: {
             id: session.id,
